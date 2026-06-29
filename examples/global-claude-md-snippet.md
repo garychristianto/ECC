@@ -11,11 +11,14 @@
 
 ## Response style
 
-- Lead every response with an `## Executive summary` that is ACTIONABLE: state the
-  answer/recommendation AND the concrete steps to act on it — exact commands to run,
-  files/configs to change, and the order to do them in. I should be able to execute
-  from the summary alone, without reading further.
-- Put the reasoning, background, trade-offs, and caveats in a `## Details` section
-  below for optional deeper reading.
-- Keep the summary tight but complete enough to act on. Trivial answers may be
+- Lead every response with an `## Executive summary` that is COMPLETE AND
+  SELF-SUFFICIENT: I must be able to fully understand and act on the answer from the
+  summary alone ~99% of the time. Put everything that matters in it — the
+  recommendation, the exact commands to run, the files/configs to change and in what
+  order, and any caveat that would change what I do.
+- Treat `## Details` as an OPTIONAL appendix: deeper reasoning, background, and edge
+  cases for a rare deep dive. If I have to read Details to understand or act, the
+  summary has FAILED — fix the summary, don't offload into Details.
+- Completeness beats brevity: never push an actionable step or decision-changing
+  caveat down into Details. Keep it tight, but whole. Trivial answers may be
   summary-only.
