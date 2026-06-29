@@ -6,8 +6,10 @@
 #   - capability = ECC skills/agents (imported, kept LEAN at the global layer)
 #   - knowledge  = OKF bundles (declarative facts + conventions + decisions)
 #
-# Framework note: the engineering rows default to FLUTTER. If Alkitab is
-# Kotlin/Swift/React Native, swap the marked lines (see README.md swap table).
+# Framework: Alkitab is REACT NATIVE (TypeScript). Engineering rows reflect that.
+# ECC's react-* skills are React-general (web-oriented); RN-specific concerns
+# (Metro, native modules, navigation, offline storage) are a known gap — candidate
+# for a custom skills/hermes-generated/react-native-* skill, like the i18n gap.
 
 # ── Model routing ────────────────────────────────────────────────────────────
 model:
@@ -60,18 +62,20 @@ skills:
 repo_overlays:
   alkitab-indonesia:
     path: ~/code/alkitab-indonesia          # <-- set real path
-    install: "npx ecc-install --target claude-project --with framework:flutter --with capability:accessibility"
-    skills:                                  # SWAP for kotlin/swift/react if needed
-      - dart-flutter-patterns
-      - flutter-dart-code-review
-      - accessibility
+    install: "npx ecc-install --target claude-project --with framework:react"
+    skills:                                  # React Native (TypeScript)
+      - react-patterns
+      - react-testing
+      - react-performance
+      - accessibility                         # skill copied manually (not a --with target)
       - content-hash-cache-pattern            # offline verse caching
     agents:
-      - flutter-reviewer
-      - dart-build-resolver
+      - react-reviewer
+      - react-build-resolver
+      - typescript-reviewer
       - code-reviewer
       - e2e-runner
-    rules: [dart]
+    rules: [react, typescript]
 
 # ── LAYER C: knowledge (OKF bundles, read by every layer) ────────────────────
 okf:

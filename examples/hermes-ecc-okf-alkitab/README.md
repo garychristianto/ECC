@@ -33,8 +33,10 @@ The retro engine itself lives at repo root: `scripts/retro/collect.js`,
 
 ## Bring-up order (do these tomorrow, in order)
 
-**0. Pick the mobile framework.** This kit defaults to **Flutter**. If Alkitab is
-Kotlin/Swift/React Native, use the swap table below before step 3.
+**0. Framework: React Native (TypeScript).** The overlay is already set for it.
+ECC's `react-*` skills are React-general (web-oriented) — RN-specific concerns
+(Metro, native modules, navigation, offline storage) are a known gap, a candidate
+for a custom `skills/hermes-generated/react-native-*` skill like the i18n gap.
 
 **1. Install ECC + verify baseline.**
 ```bash
@@ -52,9 +54,9 @@ The `skills.global_core` list (~14) is the always-on set — do not expand it ca
 **3. Layer B — per-repo overlay, scoped to the Alkitab repo only.**
 ```bash
 cd ~/code/alkitab-indonesia
-npx ecc-install --target claude-project \
-  --with framework:flutter --with capability:accessibility
+npx ecc-install --target claude-project --with framework:react
 # writes ./.claude/ — never touches ~/.claude or other repos
+# `accessibility` is a skill, not a --with target — copy it into .claude/skills/ if wanted
 ```
 
 **4. Layer C — knowledge.** Copy `okf/` → `~/.hermes/workspace/alkitab/okf/`, then:
@@ -68,16 +70,16 @@ npx ecc-install --target claude-project \
 `store-listing-canary` (already stubbed in `config.yaml`). Add heavier workflows
 only after these are stable.
 
-## Framework swap table (step 3)
+## Framework overlay (already set: React Native)
 
 | Framework | `--with` | Overlay skills / agents / rules |
 |---|---|---|
-| Flutter (default) | `framework:flutter` | dart-flutter-patterns · flutter-reviewer · dart-build-resolver · rules/dart |
+| **React Native (selected)** | `framework:react` | react-patterns, react-testing, react-performance · react-reviewer, react-build-resolver, typescript-reviewer · rules/react, rules/typescript |
+| Flutter | `framework:flutter` | dart-flutter-patterns · flutter-reviewer · dart-build-resolver · rules/dart |
 | Kotlin/Android | `framework:kotlin` | android-clean-architecture, kotlin-patterns · kotlin-reviewer · rules/kotlin |
 | Swift/iOS | `framework:swift` | swiftui-patterns · swift-reviewer · rules/swift |
-| React Native | `framework:react` | react-reviewer · rules/react |
 
-Edit `config.yaml → repo_overlays.alkitab-indonesia` to match.
+Already reflected in `config.yaml → repo_overlays.alkitab-indonesia`.
 
 ## Run the retro (any time, no Mandor required)
 
