@@ -1,0 +1,116 @@
+# Hermes x ECC x OKF — Alkitab Indonesia stack
+#
+# This is a TEMPLATE you copy to ~/.hermes/config.yaml tomorrow and fill in.
+# It encodes the layered model from the design sessions:
+#   - harness   = Hermes (this file is its config)
+#   - capability = ECC skills/agents (imported, kept LEAN at the global layer)
+#   - knowledge  = OKF bundles (declarative facts + conventions + decisions)
+#
+# Framework note: the engineering rows default to FLUTTER. If Alkitab is
+# Kotlin/Swift/React Native, swap the marked lines (see README.md swap table).
+
+# ── Model routing ────────────────────────────────────────────────────────────
+model:
+  default: claude-opus-4-8        # operator brain (planning, unblocking, judgment)
+  routes:
+    dispatch: claude-sonnet-4-6   # per-ticket crew work (cheaper, high volume)
+    retro: claude-opus-4-8        # the retro deserves the strong model
+  crew: "claude -p"               # subscription crew for any Mandor-style dispatch
+
+# ── MCP servers (register only what you actually use) ────────────────────────
+# Skills are only as good as the MCP tools behind them. deep-research NEEDS one
+# of firecrawl/exa or it will not function.
+mcp:
+  github: { enabled: true }                 # eng execution, retro GitHub evidence
+  context7: { enabled: true }               # library docs lookup
+  exa: { enabled: true }                    # research (deep-research dependency)
+  firecrawl: { enabled: true }              # research (deep-research dependency)
+  playwright: { enabled: true }             # browser-qa, screenshot oracles
+  google-drive: { enabled: true }           # content/ops system of record
+  # stripe: { enabled: false }              # enable when revenue ops start
+
+# ── LAYER A: global capability core (ALWAYS-ON — keep this list small) ────────
+# Every Hermes task pays for these descriptions. ~14 skills. Do NOT dump all 271.
+skills:
+  imports_dir: ~/.hermes/skills/ecc-imports
+  global_core:
+    # research
+    - deep-research
+    - market-research
+    - research-ops
+    # content & distribution
+    - content-engine
+    - article-writing
+    - brand-voice
+    - crosspost
+    - social-publisher
+    - seo
+    # ops & automation
+    - autonomous-loops
+    - continuous-agent-loop
+    - canary-watch
+    # the self-improvement engine (this repo: skills/retro)
+    - retro
+    # eng basics
+    - codebase-onboarding
+
+# ── LAYER B: per-repo overlay (loaded only when working IN the repo) ──────────
+# Installed into <repo>/.claude via `ecc-install --target claude-project`.
+# Listed here for reference; Hermes picks it up from the repo, not this file.
+repo_overlays:
+  alkitab-indonesia:
+    path: ~/code/alkitab-indonesia          # <-- set real path
+    install: "npx ecc-install --target claude-project --with framework:flutter --with capability:accessibility"
+    skills:                                  # SWAP for kotlin/swift/react if needed
+      - dart-flutter-patterns
+      - flutter-dart-code-review
+      - accessibility
+      - content-hash-cache-pattern            # offline verse caching
+    agents:
+      - flutter-reviewer
+      - dart-build-resolver
+      - code-reviewer
+      - e2e-runner
+    rules: [dart]
+
+# ── LAYER C: knowledge (OKF bundles, read by every layer) ────────────────────
+okf:
+  root: ~/.hermes/workspace/alkitab/okf
+  bundles:
+    - bible-facts     # book codes, verse-ref format, translations (the domain gap)
+    - conventions     # reusable oracles/conventions the retro audits against
+    - decisions       # ADR-style semantic memory ("what we decided last sprint")
+    - retro           # findings + amendments written by skills/retro
+
+# ── Cron surface (start SMALL — readiness, content, retro) ────────────────────
+cron:
+  jobs:
+    - id: verse-of-the-day
+      schedule: "0 6 * * *"
+      channel: telegram
+      staffs: [content-engine, crosspost, social-publisher]
+      prompt: |
+        Compose the Indonesian verse-of-the-day post. Read okf/bible-facts for the
+        canonical reference format and translation rules. Draft in brand-voice,
+        then queue to the configured channels. Do not invent verse text — cite the
+        translation edition from okf/bible-facts/translations.md.
+
+    - id: sprint-retro
+      schedule: "0 18 * * FRI"
+      channel: telegram
+      staffs: [retro]
+      prompt: |
+        Run the weekly retro for the Alkitab repo.
+        1) node scripts/retro/collect.js --window 7d --run "week-of-$(date +%F)"
+           --github-json <gh-evidence-from-MCP> --out evidence.json
+        2) Invoke the `retro` skill over evidence.json + okf/conventions.
+        3) Write findings + amendments under okf/retro/<run>/ and open a review PR.
+        Cite-or-drop. Propose only; never weaken a check.
+
+    - id: store-listing-canary
+      schedule: "0 9 * * *"
+      channel: telegram
+      staffs: [canary-watch]
+      prompt: |
+        Check the published app build/store listing health. Escalate on regression
+        only; stay silent if nothing changed.
